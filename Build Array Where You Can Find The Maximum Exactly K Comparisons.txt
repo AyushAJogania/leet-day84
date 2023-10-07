@@ -1,0 +1,26 @@
+class Solution {
+public:
+    int numOfArrays(int n, int m, int k) {
+        const int MOD = 1000000007;
+        vector<vector<vector<long long>>> dp(n + 1, vector<vector<long long>>(m + 1, vector<long long>(k + 1, 0)));
+        vector<vector<vector<long long>>> sum(n + 1, vector<vector<long long>>(m + 1, vector<long long>(k + 1, 0)));
+
+        for (int maxN = 1; maxN <= m; ++maxN) {
+            dp[1][maxN][1] = 1;
+            sum[1][maxN][1] = maxN;
+        }
+
+        for (int sz = 1; sz <= n; ++sz) {
+            for (int maxN = 1; maxN <= m; ++maxN) {
+                for (int cost = 1; cost <= k; ++cost) {
+                    long long ans = (maxN * dp[sz - 1][maxN][cost]) % MOD;
+                    ans = (ans + sum[sz - 1][maxN - 1][cost - 1]) % MOD;
+                    dp[sz][maxN][cost] = (dp[sz][maxN][cost] + ans) % MOD;
+                    sum[sz][maxN][cost] = (sum[sz][maxN - 1][cost] + dp[sz][maxN][cost]) % MOD;
+                }
+            }
+        }
+
+        return static_cast<int>(sum[n][m][k]);
+    }
+};
